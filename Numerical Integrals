@@ -1,0 +1,78 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+#Defines our function.
+def f(x):
+    return np.exp(x)+x**2
+
+def traprule(f,a,b,n):
+    #Defines our width to be our last endpoint minus our first, divided
+    #by our required number of sub-intervals.
+    h = (b-a)/n
+    
+    #Creates an array of our interval split in to n+1 equidistant steps.
+    endpoints = np.linspace(a,b,n+1)
+    
+    #Composes our array of endpoints with our function f.
+    areas = f(endpoints)
+                                
+    #Slices out left and right endpoints.
+    left_sliced = areas[1:]
+    right_sliced = areas[:-1]
+    
+    #Uses Trapezium Rule formula.
+    total = (h/2)*(left_sliced + right_sliced)
+    integral = np.sum(total)
+    
+    return integral
+
+#Calls our function.
+traprule(f,0,2,4)
+
+#Creates an arrary with orders 0-20.
+p = np.arange(0,21,1)
+
+x_values = []
+y_values = []
+
+#iterates over every element of our array.
+for i in np.nditer(p):
+    
+    #Computes 2 to the power of i and assigns this to x
+    #also executes our trapezium rule function from Part 1 
+    #and assigns this value for y.
+    x = 2**i
+    y = traprule(f,0,2,2**i)
+    
+    x_values.append(x)
+    y_values.append(y)
+
+
+#Creates a semi logarithmic plot using the highest and 
+#lowest values of n as bounds for our x-axis.
+plot1 = plt.figure(1)
+plt.semilogx(x_values,y_values)
+plt.xlim([x_values[0],x_values[-1]])
+plt.ylim([8,y_values[0]])
+plt.ylabel('Numerical Integral Value')
+plt.xlabel('Our Value for n')
+plt.savefig('semilog.eps')
+
+#Computes the exact integral of our function.
+exactintegral = np.exp(2)+(5/3)
+
+#Computes the absolute difference between two parameters.
+def absdifference(trapy,exact):
+    diff = abs(trapy - exact)
+    return diff
+absdiff = absdifference(y_values,exactintegral)
+
+#plots the value for n increasing against the absolute difference.
+plot2 = plt.figure(2)
+plt.loglog(x_values,absdiff)
+plt.ylabel('Absolute Difference')
+plt.xlabel('Our Value for n')
+plt.savefig('loglog.eps')
+
+plt.show()
