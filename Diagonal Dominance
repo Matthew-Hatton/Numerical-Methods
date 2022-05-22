@@ -1,0 +1,44 @@
+import numpy as np
+#Defines any nxn matrix
+b = np.array([[3,-1,-1,-1],[3,40,8,8],[1,2,90,9],[6,1,2,200]])
+
+def diagdom(a):
+    
+    #Checks if the matrix is nxn.
+    if a.shape[0] != a.shape[1]:
+        print("Not an nxn matrix.")
+    else:
+        check = []
+        chk = True
+        
+        #stores the absolute value of all diagonal elements.
+        diag = np.diag(abs(a))
+        
+        #Iterates over the number of elements in our array (n in an nxn matrix).
+        for item in range(len(a)):
+            
+            #Adds elements of each row minus the diagonal elements.
+            tot = np.sum(abs(a[item])) - diag[item]
+            
+            #If the total is less than the diagonal element for a particular
+            #row then this row is diagonally dominated. Adds letter 'T'
+            #for True (True mark) and 'F' for False.
+            if tot < diag[item]:
+                check.append('T')
+            else:
+                check.append('F')
+                
+        #Checks if each element of check is a True mark (one for each row)
+        #if not we know at least one row was not diagonally dominated
+        #therefore entire matrix cannot be diagonally dominated.
+        for x in check:
+            if x != 'T':
+                chk = False
+        
+        #If each element of check was 'T' then matrix is diagonally dominated.
+        if chk == True:
+            return True
+        else:
+            return False
+        
+print(diagdom(b))
