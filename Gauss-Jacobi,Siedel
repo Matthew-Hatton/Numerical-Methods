@@ -1,0 +1,114 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+#Rearranges equations to give x,y,z iterative equations.
+def xeqn(y,z):
+    return (7-(2*y)+z)/6
+
+def yeqn(x,z):
+    return (-3-(2*x)-z)/(-6)
+
+def zeqn(x,y):
+    return (11-(x)-(2*y))/8
+
+def gaussjacobi(it):
+    
+    #Defines starting guesses.
+    x_i = [0]
+    y_i = [0]
+    z_i = [0]
+    for item in range(it):
+        #Uses Gauss Jacobi Method and adds each iterations results to a list.
+        x_i.append(xeqn(y_i[item],z_i[item]))
+        y_i.append(yeqn(x_i[item],z_i[item]))
+        z_i.append(zeqn(x_i[item],y_i[item]))
+    return x_i,y_i,z_i
+
+n = 20
+#assigns return values of Gauss Jacobi function to variables
+x_i = (gaussjacobi(n)[0])
+y_i = (gaussjacobi(n)[1])
+z_i = (gaussjacobi(n)[2])
+i = np.linspace(0,n,n+1)
+
+#plots our x,y,z values against each iteration.
+
+#places a tick marker at each iteration
+plt.xticks(i)
+plt.plot(i,x_i,'r',linestyle = 'dashed',label='x_i')
+plt.plot(i,y_i,'b',linestyle = 'solid',label='y_i')
+plt.plot(i,z_i,'g',linestyle = 'dotted',label='z_i')
+plt.xlabel('Number of iterations')
+plt.ylabel('x_i,y_i,z_i Values')
+plt.legend()
+plt.show()
+
+#Defines the Gauss Seidel method
+def seidel(n):
+    
+    #These lists will contain our x,y,z values for each iteration.
+    xs = [0]
+    ys = [0]
+    zs = [0]
+    
+    #Defines our initial starting guess.
+    x = 0
+    y = 0
+    z = 0
+    for item in range(n):
+        #uses our rearranged equations to perform Gauss-Seidel, continuously
+        #updates variables as to use the most recent value for x,y,z.
+        x = xeqn(y, z)
+        xs.append(x)
+        y = yeqn(x, z)
+        ys.append(y)
+        z = zeqn(x, y)
+        zs.append(z)
+    return xs,ys,zs
+
+xs,ys,zs = seidel(n)[0],seidel(n)[1],seidel(n)[2]
+
+#Plots the Gauss-Seidel method against the number of iterations.
+plt.xticks(i)
+plt.plot(i,xs,'r',linestyle = 'dashed',label='x_i')
+plt.plot(i,ys,'b',linestyle = 'solid',label='y_i')
+plt.plot(i,zs,'g',linestyle = 'dotted',label='z_i')
+plt.xlabel('Number of iterations')
+plt.ylabel('x_i,y_i,z_i Values')
+plt.legend()
+plt.show()
+
+#Plots the Gershgorin circles for the Gauss-Jacobi method.
+theta = np.linspace(0,2*np.pi,1000)
+x = (0.5)*np.cos(theta) + 0
+y = 0.5*np.sin(theta)
+plt.plot(x,y,label='Lambda 1')
+x_two = (0.5)*np.cos(theta) + 0
+y_two = (0.5)*np.sin(theta)
+plt.plot(x_two,y_two,'m',linestyle='dotted',label='Lambda 2')
+x_three = (3/8)*np.cos(theta) + 0
+y_three = (3/8)*np.sin(theta)
+plt.plot(x_three,y_three,linestyle='dashed',label='Lambda 3')
+plt.title('Gauss-Jacobi Gershgorin Circles')
+plt.xlabel('Real Axis')
+plt.ylabel('Imaginary Axis')
+plt.legend(loc=1)
+plt.show()
+
+#Plots the Gershgorin circles for the Gauss-Seidel method.
+x_s = (0.5)*np.cos(theta) + 0
+y_s = 0.5*np.sin(theta)
+plt.plot(x_s,y_s,label='Lambda 1')
+xs_two = (2/9)*np.cos(theta) + (-1/9)
+ys_two = (2/9)*np.sin(theta)
+plt.plot(xs_two,ys_two,'m',linestyle='dotted',label='Lambda 2')
+xs_three = (5/72)*np.cos(theta) + (-11/144)
+ys_three = (5/72)*np.sin(theta)
+plt.plot(xs_three,ys_three,linestyle='dashed',label='Lambda 3')
+plt.title('Gauss-Seidel Gershgorin Circles')
+plt.xlabel('Real Axis')
+plt.ylabel('Imaginary Axis')
+#Loc changes the location of the legend (1=top right).
+plt.legend(loc=1)
+plt.show()
+
