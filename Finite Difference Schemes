@@ -1,0 +1,160 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+#Defines formula for exponential
+def exp(x):
+    return np.exp(x)
+
+#Forward difference scheme formula.
+def frwdsch(x,step):
+    return (exp(x+step)-exp(x))/step
+
+#Backward difference scheme formula
+def bkwrdsch(x,step):
+    return (exp(x)-exp(x-step))/step
+
+#creates a domain with n equally spaced parts.
+def dom(n):
+    return np.linspace(-1,1,n)
+
+
+#Central Difference Function
+def centdiff(d,step):
+    diffs = []
+    for item in d:
+        #Implements central difference algorithm using our step
+        diff = (exp(item+step)-exp(item-step))/(2*step)
+        diffs.append(diff)
+        
+    #Uses forward and backward difference schemes on endpoints of our domain.
+    diffs[0] = frwdsch(d[0],step)
+    diffs[-1] = bkwrdsch(d[-1], step)
+    
+    return diffs
+n = [11,31,101,301,1001]
+
+#A function to create a list of central differences using different values of n.
+def eqdis(n):
+    lst = []
+    for item in range(len(n)):
+        lst.append(centdiff(dom(n[item]),2/(n[item]-1)))
+    return lst
+vals = eqdis(n)
+
+#finds the absolute difference between two parameters.
+def absdiff(approx,exact):
+    absdiffs = []
+    for item in range(len(approx)):
+        absdiffs.append(abs(approx[item]-exact[item]))
+    return absdiffs
+
+#We split our list into relevent sections for each value of n.
+#Takes the first embedded list.
+eleven = vals[0]
+exeleven = []
+#Finds the exact value with varying x.
+for item in dom(n[0]):
+    exeleven.append(np.exp(item))
+
+#Uses absolute difference function to find abs difference between the
+#approximate solution and the exact.
+plot_el = absdiff(eleven,exeleven)
+
+#Repeats this process for n=31,101,301,1001
+
+thirtyone = vals[1]
+exthirtyone = []
+for item in dom(n[1]):
+    exthirtyone.append(np.exp(item))
+plot_thirtyone = absdiff(thirtyone,exthirtyone)
+    
+
+hundelev = vals[2]
+exhund = []
+for item in dom(n[2]):
+    exhund.append(np.exp(item))
+plot_hundelev = absdiff(hundelev,exhund)
+    
+
+threehundone = vals[3]
+exthreehund = []
+for item in dom(n[3]):
+    exthreehund.append(np.exp(item))
+plot_threehundone = absdiff(threehundone,exthreehund)
+    
+    
+onetho = vals[4]
+exonetho = []
+for item in dom(n[4]):
+    exonetho.append(np.exp(item))
+plot_onetho = absdiff(onetho,exonetho)
+
+#Plots our 5 lines against the values of x using different linewidths and colours.
+plt.plot(dom(11),plot_el,label = '11',linewidth = 4.0,linestyle='--')
+plt.plot(dom(31),plot_thirtyone,label = '31',linewidth = 3.0,linestyle='dotted')
+plt.plot(dom(101),plot_hundelev,'m',label = '101',linewidth = 2.5,linestyle=\
+         'dashdot')
+plt.plot(dom(301),plot_threehundone,'y',label = '301',linewidth = 2)
+plt.plot(dom(1001),plot_onetho,'k',label = '1001',linewidth = 1)
+plt.xlabel('Value of x')
+plt.ylabel('Difference between Approximate and Exact Solutions')
+plt.legend(title='n value')
+
+plt.show()
+
+p = np.linspace(0,20,21)
+
+#Calculates central difference as defined in the question
+def centdiffs(p):
+    zerovals = []
+    a = [0,0,0]
+    for item in (p):
+        #changes first and last elements of 'a' to be dx, as given in the question.
+        a[0] = -1/(2**item)
+        a[-1] = 1/(2**item)
+        #defines the step h with n=3-1=2.
+        newh = (a[-1]-a[0])/2
+        #Calculates central difference.
+        zerovals.append(((exp(0+newh))-(exp(0-newh)))/(2*newh))
+
+    return zerovals
+
+approx_centdiffs = centdiffs(p)
+
+#creates list with every element 1 (21 elements), the exact value of 
+#e^x at x=1
+exact = [1]
+exact = exact * 21
+
+#Uses absolute difference function from part 1 to find abs difference between
+#the approximate and exact values. 
+approx_minus_exact_centre = absdiff(approx_centdiffs,exact)
+
+#Defines the forward difference scheme.
+def forward(p):
+    zerovals_frwd = []
+    a = [0,0]
+    for item in (p):
+        #replaces last element with dx, as defined in question.
+        a[-1] = 1/(2**item)
+        #defines the step h with n=2-1=1.
+        newh = (a[-1])/1
+        #uses forward difference function defined at the start of the question.
+        zerovals_frwd.append(frwdsch(0, newh))
+    return zerovals_frwd
+
+approx_frwddiffs = forward(p)
+approx_minus_exact_frwd = absdiff(approx_frwddiffs,exact)
+
+#Creates a log-log plot of both the absolute differences against the value of p
+#using different colours and linestyles as well as a grid and legend.
+plt.loglog(p,approx_minus_exact_centre,'m',label='Centered Difference')
+plt.loglog(p,approx_minus_exact_frwd,label='Forward Difference',\
+           linestyle = 'dashed')
+plt.ylabel('Absolute Difference')
+plt.xlabel('Our Value for p')
+plt.legend()
+plt.grid()
+plt.show()
+
+
