@@ -1,0 +1,97 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+#Defines the function given to us in the question.
+def f(x):
+    return np.cos(x)
+def datapointscheby(lowerlim,upperlim,n):
+    chebylst = []
+    
+    #Uses our chebyshev interpolation formula to find the Chebyshev nodes
+    #x_0,...,x_k. (giving n+1 data points).
+    for k in range(n+1):
+        x_k = lowerlim*(np.sin((((2*k)+1)*np.pi)/(4*(n+1)))**2) + \
+            upperlim*(np.cos((((2*k)+1)*np.pi)/(4*(n+1)))**2)
+        chebylst.append(x_k)
+    return np.array(chebylst)
+
+#Tests the function with limits -pi/2,pi/2 of order n=2 returning n+1=3 data
+#points.
+x_k = datapointscheby(-np.pi/2,np.pi/2,2)
+def lagrange(f,n,z,x_i):
+    if n >= len(x_i):
+        print("Order is greater than number of data points")
+
+    else:
+        #Two empty lists, one to add our y values to (y) and the other to store
+        #our values for p_n(z) (pnz).
+        y = []
+        pnz = []
+    
+        for item in range(len(x_i)):
+            
+            #Composes corresponding x_i data points with our function (provided in the call)
+            #and adds this value to our list, y.
+            y.append(f(x_i[item]))
+            
+        x = x_i
+        y = np.array(y)
+        
+        #np.nditer iterates over every element of our array z.
+        for item in np.nditer(z):
+            
+            #The value we will update for the interpolated polynomial 
+            #(composed with corresponding z).
+            y_strt = 0
+
+            #zip() is a function which will pair each passed iterator
+            #together, from our x and y arrays which allows us to use
+            #Lagranges formula.
+            for xi,yi in zip(x,y):
+
+                #Lagranges formula to compute our Lagrange polynomials 
+                #using successive z values (seen as 'item' here)
+                #We check that each x is not equal to the current xi so
+                #that the value can be computed using the formula given
+                #in the lecture notes.
+                L_n = np.prod((item-x[x != xi])/(xi-x[x != xi]))
+    
+                #Takes the current y_strt value (starting at 0) and 
+                #adds on the current yi multiplied by L_n.
+                y_strt += (yi * L_n)
+            pnz.append(y_strt)
+    return pnz
+z = np.linspace(-np.pi/2,np.pi/2,20)
+def datapointseq(lower,upper,n):
+    #Returns an array with values between the upper and lower points of an
+    #interval with n+1 equidistant steps.
+    return np.linspace(lower,upper,n+1)
+
+#Finds equidistant data points and uses them in our Lagrange function to
+#find our interpolation points.
+p3_xi = datapointseq((-np.pi)/2,(np.pi)/2,2)
+values = lagrange(f,2,z,p3_xi)
+values = np.array(values)
+
+#Inputs our Chebyshev points using our Chebyshev function defined in Part 1.
+chebydata = np.array(datapointscheby(-np.pi/2, np.pi/2, 2))
+chebyvalues = lagrange(f,2,z,chebydata)
+chebyvalues = np.array(chebyvalues)
+
+#Plots both the Equidistant points and Chebyshev interpolations on the same
+#plot with different line styles and labels.
+plt.plot(z,values,'r',linestyle='dashed',marker='.',label='Equidistant points')
+plt.plot(z,chebyvalues,'g',marker='.',label='Chebyshev points')
+plt.xlabel("Our values for z")
+plt.ylabel("p_2(z)")
+plt.legend()
+plt.title('Interpolation of cos(x)')
+plt.savefig('q1fig.eps')
+
+plt.show()
+
+
+
+
+
+
