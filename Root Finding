@@ -1,0 +1,111 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+#Defines our function f.
+def f(x):
+    return np.exp(x) - x**2
+
+#Defines the derivative of f.
+def f_prime(x):
+    return np.exp(x) - 2*x
+
+def newton(initial,tolerance):
+    #Defines a counter, which is used in part 2.
+    counter = 0
+
+    #Checks if the difference is greater than the tolerance.
+    while abs(f(initial)) > tolerance:
+        #Computes our root using newton's method.
+        initial -= (f(initial)/f_prime(initial))
+        
+        counter += 1
+    #print("The approximate real root is", initial, "with a tolerance of", tolerance,".")
+    return counter
+
+
+#Uses our function to find the approximate real root with a given tolerance.
+newton(-0.5,0.00001)
+
+tau = 10**(-5)
+
+#Creates a list of our given x_0 values (starting points).
+x_0 = list(range(-10,6))
+
+#Creates an empty list which we will add our minimum number of iterations to.
+miniterations = []
+
+
+for i in range(len(x_0)):
+    
+    #calls our function newton with paramenters as the i'th value of x_0 and
+    #our tolerance tau. The variable iterations store our count.
+    iterations = newton(x_0[i],tau)
+
+    #Adds each number of iterations to our empty list defined above.
+    miniterations.append(iterations)
+
+    #Loops repeats for our next i'th value of x_0.
+
+x_0 = np.array(x_0)
+n_min = np.array(miniterations)
+
+plt.plot(x_0,n_min)
+plt.xlabel("Our values for x_0")
+plt.ylabel("Minimum number of iterations")
+plt.savefig('q3fig.eps')
+
+plt.show()
+
+def intbisection(lower,upper,tolerance,iterations):
+    count = 0
+    
+    #We loop an arbitrarily large number of times to find our root 
+    #using interval bisection.
+    for i in range(iterations):
+    
+        #Defines the midpoint of our interval.
+        middle = (lower+upper)/2
+
+        #Checks if the sign of f(lower) against f(middle) if they're equal
+        #we set our middle to be equal to a new low point else if they're
+        #not equal, we set middle equal to a new upper point.
+        if np.sign(f(lower)) == np.sign(f(middle)):
+
+            lower = middle
+        else:
+            upper = middle
+                        
+        count += 1
+            
+        #We check if the difference between our 'new' upper/lower point and 
+        #our 'old' upper/lower point is less than a given tolerance. If it
+        #is we break out of the for loop as we have found our root.
+        if abs(f(middle)) < tolerance:
+            break
+    if abs(f(middle)) >= tolerance:
+        print("No root found in", iterations,"iterations.")
+    else:
+        print('Using Interval Bisection:')
+        print("The unique real root is", middle, "and it took", count,"iterations")
+
+        
+
+#Calls the function with a given interval along with a given tolerance.
+intbisection(-1,0,tau,17)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
